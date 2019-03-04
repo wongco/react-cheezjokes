@@ -44,22 +44,26 @@ const Joke = props => {
 
   return (
     <AppContext.Consumer>
-      {({ upVote, downVote }) => {
+      {({ upVote, downVote, votedJokes }) => {
         return (
           <JokeContainer key={id}>
             <JokeTextContainer>{joketext}</JokeTextContainer>
             <VoteContainer>
               <div>{`Vote Total: ${votes}`}</div>
-              <StyledFai
-                onClick={() => upVote(id)}
-                icon={faThumbsUp}
-                style={{ color: 'orange' }}
-              />
-              <StyledFai
-                onClick={() => downVote(id)}
-                icon={faThumbsDown}
-                style={{ color: 'red' }}
-              />
+              {!votedJokes.has(id) && (
+                <>
+                  <StyledFai
+                    onClick={() => upVote(id)}
+                    icon={faThumbsUp}
+                    style={{ color: 'orange' }}
+                  />
+                  <StyledFai
+                    onClick={() => downVote(id)}
+                    icon={faThumbsDown}
+                    style={{ color: 'red' }}
+                  />
+                </>
+              )}
             </VoteContainer>
           </JokeContainer>
         );

@@ -28,6 +28,7 @@ const IsLoading = styled.div`
 export const AppContext = React.createContext();
 class App extends Component {
   state = {
+    votedJokes: new Set(),
     isLoading: true,
     randomJokes: [],
     topJokes: [],
@@ -36,6 +37,9 @@ class App extends Component {
 
   componentDidMount() {
     // check if lists exists in LocalStorage, if so retrieve from cache
+
+    // pull out jokes that have been votedOn
+    const votedJokes = new Set(JSON.parse(localStorage.getItem('votedJokes')));
 
     // else pull from API
     setTimeout(async () => {
@@ -54,6 +58,7 @@ class App extends Component {
       // TODO: Update localStorage with Lists
 
       this.setState({
+        votedJokes,
         randomJokes,
         topJokes,
         bottomJokes,
@@ -94,11 +99,24 @@ class App extends Component {
         return jokeObj;
       });
 
-      // placeholder to add id to localStorage to prevent further voting
+      // add voted items to LocalStorage
+      const votedJokes = new Set(
+        JSON.parse(localStorage.getItem('votedJokes'))
+      );
+      if (votedJokes.size > 0) {
+        votedJokes.add(id);
+        localStorage.setItem(
+          'votedJokes',
+          JSON.stringify(Array.from(votedJokes))
+        );
+      } else {
+        localStorage.setItem('votedJokes', JSON.stringify([id]));
+      }
 
       // TODO: Update localStorage with Lists
 
       return {
+        votedJokes,
         randomJokes: newRandomJokes,
         topJokes,
         bottomJokes,
@@ -141,6 +159,7 @@ class App extends Component {
       <GridWrapper>
         <AppContext.Provider
           value={{
+            ...this.state,
             upVote: this.upVote,
             downVote: this.downVote
           }}
