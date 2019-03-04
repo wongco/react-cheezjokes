@@ -9,26 +9,34 @@ const JokeContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2em;
+  padding: 1em;
+  margin: 0.5em;
+  border-radius: 15px;
   border: 1px solid black;
+  width: 80%;
+  box-shadow: 0px 2px 10px gray;
 `;
 
 const JokeTextContainer = styled.p`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* border: 1px solid blue; */
   width: 70%;
-  /* flex-basis: 4 4 100%; */
+  margin: 0;
+  padding: 1em;
 `;
 
 const VoteContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-self: center;
-  /* border: 1px solid orange; */
   width: 150px;
-  /* flex-basis: 1 1 100%; */
+`;
+
+const StyledFai = styled(FontAwesomeIcon)`
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Joke = props => {
@@ -42,12 +50,12 @@ const Joke = props => {
             <JokeTextContainer>{joketext}</JokeTextContainer>
             <VoteContainer>
               <div>{`Vote Total: ${votes}`}</div>
-              <FontAwesomeIcon
+              <StyledFai
                 onClick={() => upVote(id)}
                 icon={faThumbsUp}
                 style={{ color: 'orange' }}
               />
-              <FontAwesomeIcon
+              <StyledFai
                 onClick={() => downVote(id)}
                 icon={faThumbsDown}
                 style={{ color: 'red' }}

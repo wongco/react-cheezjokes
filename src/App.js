@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import TopJokes from './Components/TopJokes';
 import BottomJokes from './Components/BottomJokes';
 import RandomJokes from './Components/RandomJokes';
-import Titlebar from './Components/Header';
+import Titlebar from './Components/TitleBar';
 import CheezApi from './Helpers/CheezApi';
 
 const GridWrapper = styled.div`
   display: grid;
-  grid-template: 100px 600px 600px / 48vw 48vw;
+  grid-template: 100px 25% 50% / 50vw 50vw;
   grid-template-areas:
     'titlebar titlebar'
     'main top'
@@ -16,11 +16,15 @@ const GridWrapper = styled.div`
 `;
 
 const IsLoading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 40px;
   height: 40px;
   background-color: red;
 `;
 
+// create Context to Tunnel voteHandlers to Jokes
 export const AppContext = React.createContext();
 class App extends Component {
   state = {
@@ -58,9 +62,13 @@ class App extends Component {
     }, 0);
   }
 
-  // upvotes a specific joke
-  upVote = async id => {
-    await CheezApi.upVote(id);
+  // adds or deletes a vote for a specific joke
+  vote = async (id, direction) => {
+    if (direction === 'up') {
+      await CheezApi.upVote(id);
+    } else {
+      await CheezApi.downVote(id);
+    }
 
     const jokelistPromises = [
       CheezApi.getJokes('top'),
@@ -76,7 +84,12 @@ class App extends Component {
       // updates local vote for obj
       const newRandomJokes = state.randomJokes.map(jokeObj => {
         if (jokeObj.id === id) {
-          const newJokeObj = { ...jokeObj, votes: jokeObj.votes + 1 };
+          const newVoteValue =
+            direction === 'up' ? jokeObj.votes + 1 : jokeObj.votes - 1;
+          const newJokeObj = {
+            ...jokeObj,
+            votes: newVoteValue
+          };
           return newJokeObj;
         }
         return jokeObj;
@@ -94,44 +107,12 @@ class App extends Component {
       };
     });
   };
+
+  // upvotes a specific joke
+  upVote = async id => this.vote(id, 'up');
 
   // downvotes a specific joke
-  downVote = async id => {
-    // call api helper and decrement vote
-    await CheezApi.downVote(id);
-
-    const jokelistPromises = [
-      CheezApi.getJokes('top'),
-      CheezApi.getJokes('bottom')
-    ];
-
-    // get all jokeLists and update State
-    const jokelists = await Promise.all(jokelistPromises);
-    const topJokes = jokelists[0];
-    const bottomJokes = jokelists[1];
-
-    this.setState(state => {
-      // updates local vote for obj
-      const newRandomJokes = state.randomJokes.map(jokeObj => {
-        if (jokeObj.id === id) {
-          const newJokeObj = { ...jokeObj, votes: jokeObj.votes - 1 };
-          return newJokeObj;
-        }
-        return jokeObj;
-      });
-
-      // placeholder to add id to localStorage to prevent further voting
-
-      // TODO: Update localStorage with Lists
-
-      return {
-        randomJokes: newRandomJokes,
-        topJokes,
-        bottomJokes,
-        isLoading: false
-      };
-    });
-  };
+  downVote = async id => this.vote(id, 'down');
 
   // gets new Jokes and updates all windows
   getNewJokes = async () => {
@@ -169,11 +150,8 @@ class App extends Component {
             <IsLoading />
           ) : (
             <>
-              <Titlebar />
-              <RandomJokes
-                getNewJokes={this.getNewJokes}
-                jokes={this.state.randomJokes}
-              />
+              <Titlebar getNewJokes={this.getNewJokes} />
+              <RandomJokes jokes={this.state.randomJokes} />
               <TopJokes jokes={this.state.topJokes} />
               <BottomJokes jokes={this.state.bottomJokes} />
             </>
