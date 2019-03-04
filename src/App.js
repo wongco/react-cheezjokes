@@ -8,7 +8,7 @@ import CheezApi from './Helpers/CheezApi';
 
 const GridWrapper = styled.div`
   display: grid;
-  grid-template: 100px 25% 50% / 50vw 50vw;
+  grid-template: 150px 25% 50% / 50vw 50vw;
   grid-template-areas:
     'titlebar titlebar'
     'main top'
@@ -64,10 +64,11 @@ class App extends Component {
 
   // adds or deletes a vote for a specific joke
   vote = async (id, direction) => {
+    let updatedJokeData;
     if (direction === 'up') {
-      await CheezApi.upVote(id);
+      updatedJokeData = await CheezApi.upVote(id);
     } else {
-      await CheezApi.downVote(id);
+      updatedJokeData = await CheezApi.downVote(id);
     }
 
     const jokelistPromises = [
@@ -84,11 +85,9 @@ class App extends Component {
       // updates local vote for obj
       const newRandomJokes = state.randomJokes.map(jokeObj => {
         if (jokeObj.id === id) {
-          const newVoteValue =
-            direction === 'up' ? jokeObj.votes + 1 : jokeObj.votes - 1;
           const newJokeObj = {
             ...jokeObj,
-            votes: newVoteValue
+            votes: updatedJokeData.votes
           };
           return newJokeObj;
         }

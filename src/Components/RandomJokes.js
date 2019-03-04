@@ -12,10 +12,6 @@ const QuestionsContainer = styled.div`
   padding-top: 1em;
 `;
 
-const StyledTitle = styled.h1`
-  /* display: flex; */
-`;
-
 const RandomJokes = props => {
   return (
     <GridChild gridArea="main">

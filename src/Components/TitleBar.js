@@ -9,6 +9,7 @@ const StyledHeaderContainer = styled.div`
   width: 100%;
   height: 100%;
   font-size: 400%;
+  text-shadow: 2px 2px 8px gray;
 `;
 
 const StyledButton = styled.button`
@@ -18,11 +19,13 @@ const StyledButton = styled.button`
   font-weight: 600;
   border-radius: 5px;
   margin: 0 5em;
-  transition: background-color 1s ease, color 1s ease;
+  box-shadow: 0 3px 10px gray;
+  transition: background-color 0.5s ease, color 0.5s ease;
 
   &:hover {
     background-color: gray;
     color: white;
+    cursor: pointer;
   }
 `;
 
